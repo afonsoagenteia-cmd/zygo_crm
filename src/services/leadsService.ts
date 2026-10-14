@@ -1,4 +1,4 @@
-import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { getSupabase, isSupabaseConfigured } from '../lib/supabase';
 import { Lead, LeadOrigin, ServiceInterest, Owner, PipelineStage } from '../types';
 
 // ============================================
@@ -8,7 +8,8 @@ import { Lead, LeadOrigin, ServiceInterest, Owner, PipelineStage } from '../type
 export const leadsService = {
   // Get all leads
   async getAll(): Promise<Lead[]> {
-    if (!isSupabaseConfigured()) {
+    const supabase = getSupabase();
+    if (!supabase) {
       console.warn('Supabase not configured, returning empty array');
       return [];
     }
@@ -67,7 +68,8 @@ export const leadsService = {
 
   // Get lead by ID
   async getById(id: string): Promise<Lead | null> {
-    if (!isSupabaseConfigured()) return null;
+    const supabase = getSupabase();
+    if (!supabase) return null;
 
     const { data, error } = await supabase
       .from('leads')
@@ -117,7 +119,8 @@ export const leadsService = {
 
   // Create new lead
   async create(leadData: Omit<Lead, 'id' | 'historico' | 'automacoes' | 'notas' | 'pipelineStage'>): Promise<Lead | null> {
-    if (!isSupabaseConfigured()) return null;
+    const supabase = getSupabase();
+    if (!supabase) return null;
 
     const { data, error } = await supabase
       .from('leads')
@@ -160,7 +163,8 @@ export const leadsService = {
 
   // Update lead stage
   async updateStage(id: string, newStage: PipelineStage, motivoPerda?: string): Promise<boolean> {
-    if (!isSupabaseConfigured()) return false;
+    const supabase = getSupabase();
+    if (!supabase) return false;
 
     // Get current lead to get previous stage
     const currentLead = await this.getById(id);
@@ -201,7 +205,8 @@ export const leadsService = {
 
   // Add note to lead
   async addNote(leadId: string, content: string): Promise<boolean> {
-    if (!isSupabaseConfigured()) return false;
+    const supabase = getSupabase();
+    if (!supabase) return false;
 
     const { error } = await supabase
       .from('lead_notes')
@@ -220,7 +225,8 @@ export const leadsService = {
 
   // Get notes for a lead
   async getNotes(leadId: string): Promise<{ id: string; content: string; created_at: string }[]> {
-    if (!isSupabaseConfigured()) return [];
+    const supabase = getSupabase();
+    if (!supabase) return [];
 
     const { data, error } = await supabase
       .from('lead_notes')
@@ -238,7 +244,8 @@ export const leadsService = {
 
   // Get history for a lead
   async getHistory(leadId: string): Promise<{ id: string; action: string; details: string; created_at: string }[]> {
-    if (!isSupabaseConfigured()) return [];
+    const supabase = getSupabase();
+    if (!supabase) return [];
 
     const { data, error } = await supabase
       .from('lead_history')
@@ -256,7 +263,8 @@ export const leadsService = {
 
   // Get automations for a lead
   async getAutomations(leadId: string): Promise<{ id: string; rule: string; status: string; details: string; created_at: string }[]> {
-    if (!isSupabaseConfigured()) return [];
+    const supabase = getSupabase();
+    if (!supabase) return [];
 
     const { data, error } = await supabase
       .from('automation_logs')
@@ -274,7 +282,8 @@ export const leadsService = {
 
   // Delete lead
   async delete(id: string): Promise<boolean> {
-    if (!isSupabaseConfigured()) return false;
+    const supabase = getSupabase();
+    if (!supabase) return false;
 
     const { error } = await supabase
       .from('leads')

@@ -1,13 +1,28 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 // Supabase configuration
-// Replace these with your actual Supabase project credentials
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'YOUR_SUPABASE_URL';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'YOUR_SUPABASE_ANON_KEY';
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 // Check if Supabase is configured
-export const isSupabaseConfigured = () => {
-  return supabaseUrl !== 'YOUR_SUPABASE_URL' && supabaseAnonKey !== 'YOUR_SUPABASE_ANON_KEY';
+export const isSupabaseConfigured = (): boolean => {
+  return Boolean(supabaseUrl && supabaseAnonKey && supabaseUrl.startsWith('http'));
 };
+
+// Lazy initialization - only create client if configured
+let supabaseInstance: SupabaseClient | null = null;
+
+export const getSupabase = (): SupabaseClient | null => {
+  if (!isSupabaseConfigured()) {
+    return null;
+  }
+  
+  if (!supabaseInstance) {
+    supabaseInstance = createClient(supabaseUrl!, supabaseAnonKey!);
+  }
+  
+  return supabaseInstance;
+};
+
+// For backward compatibility
+export const supabase = getSupabase();

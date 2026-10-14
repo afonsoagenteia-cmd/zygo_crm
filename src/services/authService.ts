@@ -1,4 +1,4 @@
-import { supabase } from '../lib/supabase';
+import { getSupabase } from '../lib/supabase';
 
 export interface User {
   id: string;
@@ -10,70 +10,73 @@ export interface User {
 }
 
 export const authService = {
-  // Sign up new user
   async signUp(email: string, password: string, fullName: string, role: User['role']) {
-    const { data, error } = await supabase.auth.signUp({
+    const supabase = getSupabase();
+    if (!supabase) throw new Error('Supabase not configured');
+
+    const signUpData = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        data: {
-          full_name: fullName,
-          role: role,
-        }
-      }
     });
 
-    if (error) throw error;
+    if (signUpData.error) throw signUpData.error;
 
-    // Create user profile in users table
-    if (data.user) {
-      const { error: profileError } = await supabase
+    if (signUpData.data.user) {
+      const profileResult = await supabase
         .from('users')
         .insert({
-          id: data.user.id,
+          id: signUpData.data.user.id,
           email: email,
           full_name: fullName,
           role: role,
         });
 
-      if (profileError) throw profileError;
+      if (profileResult.error) throw profileResult.error;
     }
 
-    return data;
+    return signUpData.data;
   },
 
-  // Sign in
   async signIn(email: string, password: string) {
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const supabase = getSupabase();
+    if (!supabase) throw new Error('Supabase not configured');
+
+    const result = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
-    if (error) throw error;
-    return data;
+    if (result.error) throw result.error;
+    return result.data;
   },
 
-  // Sign out
   async signOut() {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    const supabase = getSupabase();
+    if (!supabase) return;
+
+    const result = await supabase.auth.signOut();
+    if (result.error) throw result.error;
   },
 
-  // Get current user
   async getCurrentUser() {
-    const { data: { user } } = await supabase.auth.getUser();
+    const supabase = getSupabase();
+    if (!supabase) return null;
+
+    const authResult = await supabase.auth.getUser();
+    const user = authResult.data.user;
     
     if (!user) return null;
 
-    // Get user profile
-    const { data: profile, error } = await supabase
+    const profileResult = await supabase
       .from('users')
       .select('*')
       .eq('id', user.id)
       .single();
 
+    const profile = profileResult.data;
+    const error = profileResult.error;
+
     if (error || !profile) {
-      // Return basic user info if profile not found
       return {
         id: user.id,
         email: user.email || '',
@@ -86,50 +89,63 @@ export const authService = {
     return profile as User;
   },
 
-  // Get all users
   async getAllUsers() {
-    const { data, error } = await supabase
+    const supabase = getSupabase();
+    if (!supabase) throw new Error('Supabase not configured');
+
+    const result = await supabase
       .from('users')
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (error) throw error;
-    return data as User[];
+    if (result.error) throw result.error;
+    return result.data as User[];
   },
 
-  // Update user profile
   async updateProfile(userId: string, updates: Partial<Pick<User, 'full_name' | 'role' | 'avatar_url'>>) {
-    const { data, error } = await supabase
+    const supabase = getSupabase();
+    if (!supabase) throw new Error('Supabase not configured');
+
+    const result = await supabase
       .from('users')
       .update(updates)
       .eq('id', userId)
       .select()
       .single();
 
-    if (error) throw error;
-    return data as User;
+    if (result.error) throw result.error;
+    return result.data as User;
   },
 
-  // Reset password
   async resetPassword(email: string) {
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    const supabase = getSupabase();
+    if (!supabase) throw new Error('Supabase not configured');
+
+    const result = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: window.location.origin + '/reset-password',
     });
 
-    if (error) throw error;
+    if (result.error) throw result.error;
   },
 
-  // Update password
   async updatePassword(newPassword: string) {
-    const { error } = await supabase.auth.updateUser({
+    const supabase = getSupabase();
+    if (!supabase) throw new Error('Supabase not configured');
+
+    const result = await supabase.auth.updateUser({
       password: newPassword,
     });
 
-    if (error) throw error;
+    if (result.error) throw result.error;
   },
 
-  // Listen to auth state changes
   onAuthStateChange(callback: (event: string, session: any) => void) {
+    const supabase = getSupabase();
+    if (!supabase) {
+      const mockSubscription = { unsubscribe: () => {} };
+      return { data: { subscription: mockSubscription } };
+    }
+
     return supabase.auth.onAuthStateChange(callback);
   },
 };
