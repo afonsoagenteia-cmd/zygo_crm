@@ -1,84 +1,162 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
 import { Lead, PipelineStage, AutomationLog, HistoryEntry } from '../types';
 import { INITIAL_LEADS } from '../data';
+import { leadsService } from '../services/leadsService';
+import { isSupabaseConfigured } from '../lib/supabase';
 
 interface CRMContextType {
   leads: Lead[];
-  addLead: (lead: Omit<Lead, 'id' | 'historico' | 'automacoes' | 'notas' | 'pipelineStage'>) => void;
-  updateLeadStage: (leadId: string, newStage: PipelineStage, motivoPerda?: string) => void;
-  addNota: (leadId: string, nota: string) => void;
+  loading: boolean;
+  error: string | null;
+  addLead: (lead: Omit<Lead, 'id' | 'historico' | 'automacoes' | 'notas' | 'pipelineStage'>) => Promise<void>;
+  updateLeadStage: (leadId: string, newStage: PipelineStage, motivoPerda?: string) => Promise<void>;
+  addNota: (leadId: string, nota: string) => Promise<void>;
   getLeadById: (id: string) => Lead | undefined;
   slaAlerts: { leadId: string; leadName: string; hoursSinceEntry: number }[];
+  refreshLeads: () => Promise<void>;
 }
 
 const CRMContext = createContext<CRMContextType | undefined>(undefined);
 
 export function CRMProvider({ children }: { children: ReactNode }) {
-  const [leads, setLeads] = useState<Lead[]>(INITIAL_LEADS);
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const addLead = useCallback((leadData: Omit<Lead, 'id' | 'historico' | 'automacoes' | 'notas' | 'pipelineStage'>) => {
-    const now = new Date().toISOString();
-    const newLead: Lead = {
-      ...leadData,
-      id: `lead-${Date.now()}`,
-      pipelineStage: 'Novo Lead',
-      notas: [],
-      historico: [
-        { id: `h-${Date.now()}`, timestamp: now, action: 'Lead criado', details: `Via ${leadData.origem}` }
-      ],
-      automacoes: [
-        {
-          id: `a-${Date.now()}`,
-          timestamp: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
-          rule: 'Regra 1: Boas-vindas Automáticas',
-          status: 'Executada',
-          details: 'Email de boas-vindas enviado ao lead + Content Specialist notificado por Slack/Email'
-        }
-      ]
-    };
-    setLeads(prev => [newLead, ...prev]);
+  // Load leads on mount
+  useEffect(() => {
+    loadLeads();
   }, []);
 
-  const updateLeadStage = useCallback((leadId: string, newStage: PipelineStage, motivoPerda?: string) => {
-    const now = new Date().toISOString();
-    setLeads(prev => prev.map(lead => {
-      if (lead.id !== leadId) return lead;
-      
-      const historyEntry: HistoryEntry = {
-        id: `h-${Date.now()}`,
-        timestamp: now,
-        action: 'Etapa alterada',
-        details: `De "${lead.pipelineStage}" para "${newStage}"`
-      };
+  const loadLeads = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-      const newAutomations: AutomationLog[] = [];
-
-      // Regra 3: Se etapa é "Ganho" → Handover
-      if (newStage === 'Ganho') {
-        newAutomations.push({
-          id: `a-${Date.now()}`,
-          timestamp: now,
-          rule: 'Regra 3: Handover para Operações',
-          status: 'Executada',
-          details: 'Tarefa "Handover para Operações" criada + Email de boas-vindas do Cliente enviado'
-        });
+      if (isSupabaseConfigured()) {
+        // Load from Supabase
+        const data = await leadsService.getAll();
+        setLeads(data);
+      } else {
+        // Fallback to local data
+        console.warn('Supabase not configured, using local data');
+        setLeads(INITIAL_LEADS);
       }
+    } catch (err) {
+      console.error('Error loading leads:', err);
+      setError('Erro ao carregar leads. Usando dados locais.');
+      setLeads(INITIAL_LEADS);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      return {
-        ...lead,
-        pipelineStage: newStage,
-        motivoPerda: motivoPerda || lead.motivoPerda,
-        historico: [...lead.historico, historyEntry],
-        automacoes: [...lead.automacoes, ...newAutomations],
-      };
-    }));
+  const refreshLeads = async () => {
+    await loadLeads();
+  };
+
+  const addLead = useCallback(async (leadData: Omit<Lead, 'id' | 'historico' | 'automacoes' | 'notas' | 'pipelineStage'>) => {
+    try {
+      if (isSupabaseConfigured()) {
+        const newLead = await leadsService.create(leadData);
+        if (newLead) {
+          setLeads(prev => [newLead, ...prev]);
+        }
+      } else {
+        // Fallback to local
+        const now = new Date().toISOString();
+        const newLead: Lead = {
+          ...leadData,
+          id: `lead-${Date.now()}`,
+          pipelineStage: 'Novo Lead',
+          notas: [],
+          historico: [
+            { id: `h-${Date.now()}`, timestamp: now, action: 'Lead criado', details: `Via ${leadData.origem}` }
+          ],
+          automacoes: [
+            {
+              id: `a-${Date.now()}`,
+              timestamp: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
+              rule: 'Regra 1: Boas-vindas Automáticas',
+              status: 'Executada',
+              details: 'Email de boas-vindas enviado ao lead + Content Specialist notificado por Slack/Email'
+            }
+          ]
+        };
+        setLeads(prev => [newLead, ...prev]);
+      }
+    } catch (err) {
+      console.error('Error adding lead:', err);
+      throw err;
+    }
   }, []);
 
-  const addNota = useCallback((leadId: string, nota: string) => {
-    setLeads(prev => prev.map(lead => {
-      if (lead.id !== leadId) return lead;
-      return { ...lead, notas: [...lead.notas, nota] };
-    }));
+  const updateLeadStage = useCallback(async (leadId: string, newStage: PipelineStage, motivoPerda?: string) => {
+    try {
+      if (isSupabaseConfigured()) {
+        const success = await leadsService.updateStage(leadId, newStage, motivoPerda);
+        if (success) {
+          await refreshLeads();
+        }
+      } else {
+        // Fallback to local
+        const now = new Date().toISOString();
+        setLeads(prev => prev.map(lead => {
+          if (lead.id !== leadId) return lead;
+          
+          const historyEntry: HistoryEntry = {
+            id: `h-${Date.now()}`,
+            timestamp: now,
+            action: 'Etapa alterada',
+            details: `De "${lead.pipelineStage}" para "${newStage}"`
+          };
+
+          const newAutomations: AutomationLog[] = [];
+
+          // Regra 3: Se etapa é "Ganho" → Handover
+          if (newStage === 'Ganho') {
+            newAutomations.push({
+              id: `a-${Date.now()}`,
+              timestamp: now,
+              rule: 'Regra 3: Handover para Operações',
+              status: 'Executada',
+              details: 'Tarefa "Handover para Operações" criada + Email de boas-vindas do Cliente enviado'
+            });
+          }
+
+          return {
+            ...lead,
+            pipelineStage: newStage,
+            motivoPerda: motivoPerda || lead.motivoPerda,
+            historico: [...lead.historico, historyEntry],
+            automacoes: [...lead.automacoes, ...newAutomations],
+          };
+        }));
+      }
+    } catch (err) {
+      console.error('Error updating lead stage:', err);
+      throw err;
+    }
+  }, []);
+
+  const addNota = useCallback(async (leadId: string, nota: string) => {
+    try {
+      if (isSupabaseConfigured()) {
+        const success = await leadsService.addNote(leadId, nota);
+        if (success) {
+          await refreshLeads();
+        }
+      } else {
+        // Fallback to local
+        setLeads(prev => prev.map(lead => {
+          if (lead.id !== leadId) return lead;
+          return { ...lead, notas: [...lead.notas, nota] };
+        }));
+      }
+    } catch (err) {
+      console.error('Error adding note:', err);
+      throw err;
+    }
   }, []);
 
   const getLeadById = useCallback((id: string) => {
@@ -99,7 +177,17 @@ export function CRMProvider({ children }: { children: ReactNode }) {
     }));
 
   return (
-    <CRMContext.Provider value={{ leads, addLead, updateLeadStage, addNota, getLeadById, slaAlerts }}>
+    <CRMContext.Provider value={{ 
+      leads, 
+      loading, 
+      error,
+      addLead, 
+      updateLeadStage, 
+      addNota, 
+      getLeadById, 
+      slaAlerts,
+      refreshLeads 
+    }}>
       {children}
     </CRMContext.Provider>
   );

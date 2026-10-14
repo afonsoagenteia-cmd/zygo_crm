@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Menu } from 'lucide-react';
+import { Menu, Database, AlertCircle } from 'lucide-react';
 import { CRMProvider, useCRM } from './context/CRMContext';
+import { isSupabaseConfigured } from './lib/supabase';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import LeadForm from './components/LeadForm';
@@ -13,7 +14,8 @@ function CRMApp() {
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { slaAlerts } = useCRM();
+  const { slaAlerts, loading, error } = useCRM();
+  const supabaseConfigured = isSupabaseConfigured();
 
   const handleSelectLead = (leadId: string) => {
     setSelectedLeadId(leadId);
@@ -89,8 +91,43 @@ function CRMApp() {
           </div>
           <div className="w-9" /> {/* Spacer para centrar */}
         </header>
+
+        {/* Database Status Banner */}
+        {!supabaseConfigured && (
+          <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-center gap-2 text-xs text-amber-800">
+            <Database className="w-4 h-4 flex-shrink-0" />
+            <span className="font-medium">Modo Demo:</span>
+            <span>A usar dados locais. Configure o Supabase para persistência real.</span>
+            <a
+              href="/DEPLOY.md"
+              target="_blank"
+              className="ml-auto underline font-semibold hover:text-amber-900 flex-shrink-0"
+            >
+              Ver guia →
+            </a>
+          </div>
+        )}
+
+        {/* Error Banner */}
+        {error && (
+          <div className="bg-red-50 border-b border-red-200 px-4 py-2 flex items-center gap-2 text-xs text-red-800">
+            <AlertCircle className="w-4 h-4 flex-shrink-0" />
+            <span>{error}</span>
+          </div>
+        )}
+
+        {/* Loading State */}
+        {loading && (
+          <div className="flex items-center justify-center py-20">
+            <div className="text-center">
+              <div className="w-12 h-12 border-4 border-[#063C20]/20 border-t-[#C0D637] rounded-full animate-spin mx-auto mb-4" />
+              <p className="text-sm text-[#063C20]/60">A carregar dados...</p>
+            </div>
+          </div>
+        )}
+
         <main className="flex-1 overflow-auto">
-          {renderPage()}
+          {!loading && renderPage()}
         </main>
       </div>
     </div>
