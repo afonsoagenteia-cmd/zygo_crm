@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Menu, Database, AlertCircle } from 'lucide-react';
 import { CRMProvider, useCRM } from './context/CRMContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { isSupabaseConfigured } from './lib/supabase';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
@@ -9,12 +10,16 @@ import Pipeline from './components/Pipeline';
 import LeadList from './components/LeadList';
 import LeadDetail from './components/LeadDetail';
 import Automations from './components/Automations';
+import LoginPage from './components/LoginPage';
+import UsersManagement from './components/UsersManagement';
+import ProfilePage from './components/ProfilePage';
 
 function CRMApp() {
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { slaAlerts, loading, error } = useCRM();
+  const { user, loading: authLoading } = useAuth();
   const supabaseConfigured = isSupabaseConfigured();
 
   const handleSelectLead = (leadId: string) => {
@@ -60,10 +65,32 @@ function CRMApp() {
         return <LeadForm />;
       case 'automations':
         return <Automations />;
+      case 'users':
+        return <UsersManagement />;
+      case 'profile':
+        return <ProfilePage />;
       default:
         return <Dashboard onSelectLead={handleSelectLead} />;
     }
   };
+
+  // Show login page if not authenticated
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-[#063C20] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-[#C0D637] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl shadow-[#C0D637]/20">
+            <span className="font-display font-black text-[#063C20] text-3xl tracking-tighter">Z</span>
+          </div>
+          <div className="w-8 h-8 border-4 border-white/20 border-t-[#C0D637] rounded-full animate-spin mx-auto mt-6" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <LoginPage />;
+  }
 
   return (
     <div className="flex min-h-screen bg-[#FAFAF7]">
@@ -73,6 +100,7 @@ function CRMApp() {
         slaAlertCount={slaAlerts.length}
         isOpen={sidebarOpen}
         onToggle={toggleSidebar}
+        currentUser={user}
       />
       <div className="flex-1 flex flex-col min-w-0">
         {/* Mobile Header */}
@@ -136,8 +164,10 @@ function CRMApp() {
 
 export default function App() {
   return (
-    <CRMProvider>
-      <CRMApp />
-    </CRMProvider>
+    <AuthProvider>
+      <CRMProvider>
+        <CRMApp />
+      </CRMProvider>
+    </AuthProvider>
   );
 }
