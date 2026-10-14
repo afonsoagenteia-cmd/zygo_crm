@@ -46,24 +46,24 @@ export default function LeadDetail({ leadId, onBack }: LeadDetailProps) {
   const currentStageIndex = PIPELINE_STAGES.indexOf(lead.pipelineStage);
 
   return (
-    <div className="p-8 space-y-6 max-w-[1600px] mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-[1600px] mx-auto">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <button onClick={onBack} className="p-2 hover:bg-[#063C20]/5 rounded-xl transition-colors">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+        <button onClick={onBack} className="p-2 hover:bg-[#063C20]/5 rounded-xl transition-colors self-start sm:self-auto">
           <ArrowLeft className="w-5 h-5 text-[#063C20]" />
         </button>
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           <p className="text-xs uppercase tracking-widest text-[#063C20]/50 font-medium">Lead</p>
-          <h2 className="font-display text-3xl font-bold text-[#063C20] tracking-tight">{lead.nomeCompleto}</h2>
-          <p className="text-[#063C20]/60 text-sm mt-0.5">{lead.empresa}</p>
+          <h2 className="font-display text-2xl sm:text-3xl font-bold text-[#063C20] tracking-tight truncate">{lead.nomeCompleto}</h2>
+          <p className="text-[#063C20]/60 text-sm mt-0.5 truncate">{lead.empresa}</p>
         </div>
-        <div className="relative">
+        <div className="relative self-start sm:self-auto">
           <button
             onClick={() => setShowStageDropdown(!showStageDropdown)}
-            className={`px-4 py-2.5 text-sm font-semibold text-white rounded-xl flex items-center gap-2 shadow-lg ${STAGE_COLORS[lead.pipelineStage]}`}
+            className={`px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-white rounded-xl flex items-center gap-2 shadow-lg ${STAGE_COLORS[lead.pipelineStage]}`}
           >
-            {lead.pipelineStage}
-            <ChevronDown className={`w-4 h-4 transition-transform ${showStageDropdown ? 'rotate-180' : ''}`} />
+            <span className="truncate max-w-[150px] sm:max-w-none">{lead.pipelineStage}</span>
+            <ChevronDown className={`w-4 h-4 transition-transform flex-shrink-0 ${showStageDropdown ? 'rotate-180' : ''}`} />
           </button>
           {showStageDropdown && (
             <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-[#063C20]/10 z-50 py-2 overflow-hidden">
@@ -104,12 +104,12 @@ export default function LeadDetail({ leadId, onBack }: LeadDetailProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Lead Info */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-4 sm:space-y-6">
           {/* Contact Info */}
-          <div className="bg-white rounded-2xl p-6 border border-[#063C20]/8">
-            <h3 className="text-xs font-semibold text-[#063C20]/50 uppercase tracking-widest mb-5 pb-3 border-b border-[#063C20]/8">
+          <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-[#063C20]/8">
+            <h3 className="text-xs font-semibold text-[#063C20]/50 uppercase tracking-widest mb-4 sm:mb-5 pb-3 border-b border-[#063C20]/8">
               Informações do Lead
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -139,8 +139,8 @@ export default function LeadDetail({ leadId, onBack }: LeadDetailProps) {
           </div>
 
           {/* Notes */}
-          <div className="bg-white rounded-2xl p-6 border border-[#063C20]/8">
-            <h3 className="text-xs font-semibold text-[#063C20]/50 uppercase tracking-widest mb-5 pb-3 border-b border-[#063C20]/8 flex items-center gap-2">
+          <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-[#063C20]/8">
+            <h3 className="text-xs font-semibold text-[#063C20]/50 uppercase tracking-widest mb-4 sm:mb-5 pb-3 border-b border-[#063C20]/8 flex items-center gap-2">
               <MessageSquare className="w-3.5 h-3.5" /> Notas
             </h3>
             <div className="flex gap-2 mb-4">
@@ -174,8 +174,8 @@ export default function LeadDetail({ leadId, onBack }: LeadDetailProps) {
           </div>
 
           {/* History */}
-          <div className="bg-white rounded-2xl p-6 border border-[#063C20]/8">
-            <h3 className="text-xs font-semibold text-[#063C20]/50 uppercase tracking-widest mb-5 pb-3 border-b border-[#063C20]/8 flex items-center gap-2">
+          <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-[#063C20]/8">
+            <h3 className="text-xs font-semibold text-[#063C20]/50 uppercase tracking-widest mb-4 sm:mb-5 pb-3 border-b border-[#063C20]/8 flex items-center gap-2">
               <Clock className="w-3.5 h-3.5" /> Histórico de Atividades
             </h3>
             <div className="space-y-4">
@@ -201,9 +201,9 @@ export default function LeadDetail({ leadId, onBack }: LeadDetailProps) {
         </div>
 
         {/* Sidebar - Automations */}
-        <div className="space-y-6">
-          <div className="bg-white rounded-2xl p-6 border border-[#063C20]/8">
-            <h3 className="text-xs font-semibold text-[#063C20]/50 uppercase tracking-widest mb-5 pb-3 border-b border-[#063C20]/8 flex items-center gap-2">
+        <div className="space-y-4 sm:space-y-6">
+          <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-[#063C20]/8">
+            <h3 className="text-xs font-semibold text-[#063C20]/50 uppercase tracking-widest mb-4 sm:mb-5 pb-3 border-b border-[#063C20]/8 flex items-center gap-2">
               <Zap className="w-3.5 h-3.5 text-[#C0D637]" /> Automações
             </h3>
             {lead.automacoes.length > 0 ? (
@@ -233,8 +233,8 @@ export default function LeadDetail({ leadId, onBack }: LeadDetailProps) {
           </div>
 
           {/* Quick Actions */}
-          <div className="bg-white rounded-2xl p-6 border border-[#063C20]/8">
-            <h3 className="text-xs font-semibold text-[#063C20]/50 uppercase tracking-widest mb-5 pb-3 border-b border-[#063C20]/8">
+          <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-[#063C20]/8">
+            <h3 className="text-xs font-semibold text-[#063C20]/50 uppercase tracking-widest mb-4 sm:mb-5 pb-3 border-b border-[#063C20]/8">
               Ações Rápidas
             </h3>
             <div className="space-y-2">

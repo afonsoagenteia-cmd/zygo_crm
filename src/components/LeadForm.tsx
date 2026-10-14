@@ -73,14 +73,14 @@ export default function LeadForm() {
   }
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
-      <div className="mb-8">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
+      <div className="mb-6 sm:mb-8">
         <p className="text-xs uppercase tracking-widest text-[#063C20]/50 font-medium mb-2">Registo</p>
-        <h2 className="font-display text-4xl font-bold text-[#063C20] tracking-tight">Novo Lead</h2>
+        <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#063C20] tracking-tight">Novo Lead</h2>
         <p className="text-[#063C20]/60 text-sm mt-2">Preencha todos os campos obrigatórios para criar um novo lead</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-[#063C20]/8 p-8 space-y-8">
+      <form onSubmit={handleSubmit} className="bg-white rounded-xl sm:rounded-2xl border border-[#063C20]/8 p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8">
         <div>
           <h3 className="text-xs font-semibold text-[#063C20]/50 uppercase tracking-widest mb-5 pb-3 border-b border-[#063C20]/8">
             Informações de contacto
