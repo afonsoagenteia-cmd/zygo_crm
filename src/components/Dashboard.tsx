@@ -1,8 +1,12 @@
 import { useCRM } from '../context/CRMContext';
 import { PIPELINE_STAGES, STAGE_COLORS } from '../data';
-import { TrendingUp, Users, AlertTriangle, CheckCircle, Clock, Target, ArrowUpRight } from 'lucide-react';
+import { TrendingUp, Users, AlertTriangle, CheckCircle, Clock, Target, ArrowUpRight, Eye } from 'lucide-react';
 
-export default function Dashboard() {
+interface DashboardProps {
+  onSelectLead?: (leadId: string) => void;
+}
+
+export default function Dashboard({ onSelectLead }: DashboardProps) {
   const { leads, slaAlerts } = useCRM();
 
   const totalLeads = leads.length;
@@ -184,7 +188,11 @@ export default function Dashboard() {
         {/* Mobile: Card view */}
         <div className="sm:hidden divide-y divide-[#063C20]/5">
           {recentLeads.map(lead => (
-            <div key={lead.id} className="p-4 hover:bg-[#C0D637]/5">
+            <div
+              key={lead.id}
+              onClick={() => onSelectLead?.(lead.id)}
+              className="p-4 hover:bg-[#C0D637]/5 cursor-pointer active:bg-[#C0D637]/10"
+            >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-semibold text-[#063C20] truncate">{lead.nomeCompleto}</p>
@@ -216,11 +224,16 @@ export default function Dashboard() {
                 <th className="px-6 py-3 font-semibold">Etapa</th>
                 <th className="px-6 py-3 font-semibold">Proprietário</th>
                 <th className="px-6 py-3 font-semibold">Data</th>
+                <th className="px-6 py-3 font-semibold"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#063C20]/5">
               {recentLeads.map(lead => (
-                <tr key={lead.id} className="hover:bg-[#C0D637]/5">
+                <tr
+                  key={lead.id}
+                  onClick={() => onSelectLead?.(lead.id)}
+                  className="hover:bg-[#C0D637]/5 cursor-pointer"
+                >
                   <td className="px-6 py-4 text-sm font-medium text-[#063C20]">{lead.nomeCompleto}</td>
                   <td className="px-6 py-4 text-sm text-[#063C20]/60">{lead.empresa}</td>
                   <td className="px-6 py-4">
@@ -234,6 +247,17 @@ export default function Dashboard() {
                   <td className="px-6 py-4 text-sm text-[#063C20]/70">{lead.proprietario}</td>
                   <td className="px-6 py-4 text-xs text-[#063C20]/50 tabular-nums">
                     {new Date(lead.dataEntrada).toLocaleDateString('pt-PT')}
+                  </td>
+                  <td className="px-6 py-4">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSelectLead?.(lead.id);
+                      }}
+                      className="p-2 text-[#063C20]/40 hover:text-[#063C20] hover:bg-[#C0D637]/20 rounded-lg transition-colors"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </button>
                   </td>
                 </tr>
               ))}

@@ -18,6 +18,12 @@ function CRMApp() {
   const handleSelectLead = (leadId: string) => {
     setSelectedLeadId(leadId);
     setCurrentPage('lead-detail');
+    // Fechar sidebar em mobile ao selecionar um lead
+    if (window.innerWidth < 1024) {
+      setSidebarOpen(false);
+    }
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleBackFromDetail = () => {
@@ -28,6 +34,8 @@ function CRMApp() {
   const handleNavigate = (page: string) => {
     setCurrentPage(page);
     setSelectedLeadId(null);
+    // Scroll to top ao mudar de página
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const toggleSidebar = () => {
@@ -41,7 +49,7 @@ function CRMApp() {
 
     switch (currentPage) {
       case 'dashboard':
-        return <Dashboard />;
+        return <Dashboard onSelectLead={handleSelectLead} />;
       case 'leads':
         return <LeadList onSelectLead={handleSelectLead} />;
       case 'pipeline':
@@ -51,7 +59,7 @@ function CRMApp() {
       case 'automations':
         return <Automations />;
       default:
-        return <Dashboard />;
+        return <Dashboard onSelectLead={handleSelectLead} />;
     }
   };
 
