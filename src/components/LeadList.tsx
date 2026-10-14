@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useCRM } from '../context/CRMContext';
 import { STAGE_COLORS } from '../data';
-import { Search, Eye } from 'lucide-react';
+import { Search, Eye, Download } from 'lucide-react';
 
 interface LeadListProps {
   onSelectLead: (leadId: string) => void;
@@ -25,6 +25,39 @@ export default function LeadList({ onSelectLead }: LeadListProps) {
     return matchesSearch && matchesStage && matchesOrigem && matchesProprietario;
   });
 
+  const exportLeads = () => {
+    const columns: { label: string; value: (lead: typeof leads[number]) => string }[] = [
+      { label: 'ID', value: lead => lead.id },
+      { label: 'Nome completo', value: lead => lead.nomeCompleto },
+      { label: 'Empresa', value: lead => lead.empresa },
+      { label: 'Email', value: lead => lead.email },
+      { label: 'Telefone', value: lead => lead.telefone },
+      { label: 'Origem', value: lead => lead.origem },
+      { label: 'Serviço de interesse', value: lead => lead.servicoInteresse },
+      { label: 'Data de entrada', value: lead => new Date(lead.dataEntrada).toLocaleString('pt-BR') },
+      { label: 'Proprietário', value: lead => lead.proprietario },
+      { label: 'Etapa', value: lead => lead.pipelineStage },
+      { label: 'Motivo da perda', value: lead => lead.motivoPerda || '' },
+      { label: 'Notas', value: lead => lead.notas.join(' | ') },
+    ];
+    const escapeCsv = (value: string) => {
+      const safeValue = /^[=+\-@\t\r]/.test(value) ? `'${value}` : value;
+      return `"${safeValue.replace(/"/g, '""')}"`;
+    };
+    const csv = [
+      columns.map(column => escapeCsv(column.label)).join(';'),
+      ...filteredLeads.map(lead => columns.map(column => escapeCsv(column.value(lead))).join(';')),
+    ].join('\r\n');
+    const url = URL.createObjectURL(new Blob(['\uFEFF', csv], { type: 'text/csv;charset=utf-8;' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `leads-zygo-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  };
+
   const selectClass = "px-4 py-2.5 bg-white border border-[#063C20]/15 rounded-xl text-sm text-[#063C20] focus:border-[#063C20] focus:ring-2 focus:ring-[#C0D637]/30 outline-none transition-all";
 
   return (
@@ -35,6 +68,16 @@ export default function LeadList({ onSelectLead }: LeadListProps) {
           <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#063C20] tracking-tight">Leads</h2>
           <p className="text-[#063C20]/60 text-sm mt-2">{leads.length} leads registados no sistema</p>
         </div>
+        <button
+          type="button"
+          onClick={exportLeads}
+          disabled={filteredLeads.length === 0}
+          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#063C20] text-white rounded-xl text-sm font-semibold hover:bg-[#0B5C33] disabled:opacity-40 disabled:cursor-not-allowed"
+          title="Baixar os leads que correspondem aos filtros"
+        >
+          <Download className="w-4 h-4" />
+          Baixar CSV ({filteredLeads.length})
+        </button>
       </div>
 
       {/* Filters */}

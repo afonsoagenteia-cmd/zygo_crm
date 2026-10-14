@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useCRM } from '../context/CRMContext';
 import { PIPELINE_STAGES, STAGE_COLORS } from '../data';
 import { PipelineStage } from '../types';
-import { ArrowLeft, ChevronDown, MessageSquare, Zap, Clock, AlertTriangle, Send } from 'lucide-react';
+import { ArrowLeft, ChevronDown, MessageSquare, Zap, Clock, AlertTriangle, Send, Pencil, Trash2 } from 'lucide-react';
+import EditLeadModal from './EditLeadModal';
 
 interface LeadDetailProps {
   leadId: string;
@@ -10,10 +11,11 @@ interface LeadDetailProps {
 }
 
 export default function LeadDetail({ leadId, onBack }: LeadDetailProps) {
-  const { getLeadById, updateLeadStage, addNota } = useCRM();
+  const { getLeadById, updateLeadStage, updateLead, deleteLead, addNota } = useCRM();
   const lead = getLeadById(leadId);
   const [newNota, setNewNota] = useState('');
   const [showStageDropdown, setShowStageDropdown] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   if (!lead) {
     return (
@@ -43,6 +45,16 @@ export default function LeadDetail({ leadId, onBack }: LeadDetailProps) {
     setShowStageDropdown(false);
   };
 
+  const handleDelete = async () => {
+    if (!window.confirm(`Tem certeza que deseja eliminar o lead "${lead.nomeCompleto}"? Esta ação não pode ser desfeita.`)) return;
+    try {
+      await deleteLead(leadId);
+      onBack();
+    } catch {
+      window.alert('Não foi possível eliminar o lead. Tente novamente.');
+    }
+  };
+
   const currentStageIndex = PIPELINE_STAGES.indexOf(lead.pipelineStage);
 
   return (
@@ -57,7 +69,14 @@ export default function LeadDetail({ leadId, onBack }: LeadDetailProps) {
           <h2 className="font-display text-2xl sm:text-3xl font-bold text-[#063C20] tracking-tight truncate">{lead.nomeCompleto}</h2>
           <p className="text-[#063C20]/60 text-sm mt-0.5 truncate">{lead.empresa}</p>
         </div>
-        <div className="relative self-start sm:self-auto">
+        <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+          <button onClick={() => setShowEditModal(true)} className="px-3 py-2.5 text-xs sm:text-sm font-semibold text-[#063C20] bg-white border border-[#063C20]/15 rounded-xl flex items-center gap-2 hover:bg-[#C0D637]/10">
+            <Pencil className="w-4 h-4" /> Editar
+          </button>
+          <button onClick={handleDelete} aria-label="Eliminar lead" className="p-2.5 text-red-700 bg-white border border-red-200 rounded-xl hover:bg-red-50">
+            <Trash2 className="w-4 h-4" />
+          </button>
+          <div className="relative">
           <button
             onClick={() => setShowStageDropdown(!showStageDropdown)}
             className={`px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-white rounded-xl flex items-center gap-2 shadow-lg ${STAGE_COLORS[lead.pipelineStage]}`}
@@ -82,6 +101,7 @@ export default function LeadDetail({ leadId, onBack }: LeadDetailProps) {
               ))}
             </div>
           )}
+          </div>
         </div>
       </div>
 
@@ -261,6 +281,7 @@ export default function LeadDetail({ leadId, onBack }: LeadDetailProps) {
           </div>
         </div>
       </div>
+      {showEditModal && <EditLeadModal lead={lead} onClose={() => setShowEditModal(false)} onSave={data => updateLead(leadId, data)} />}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
-import { Lead, PipelineStage, AutomationLog, HistoryEntry } from '../types';
+import { Lead, LeadUpdate, PipelineStage, AutomationLog, HistoryEntry } from '../types';
 import { INITIAL_LEADS } from '../data';
 import { leadsService } from '../services/leadsService';
 import { isSupabaseConfigured } from '../lib/supabase';
@@ -9,6 +9,8 @@ interface CRMContextType {
   loading: boolean;
   error: string | null;
   addLead: (lead: Omit<Lead, 'id' | 'historico' | 'automacoes' | 'notas' | 'pipelineStage'>) => Promise<void>;
+  updateLead: (leadId: string, leadData: LeadUpdate) => Promise<void>;
+  deleteLead: (leadId: string) => Promise<void>;
   updateLeadStage: (leadId: string, newStage: PipelineStage, motivoPerda?: string) => Promise<void>;
   addNota: (leadId: string, nota: string) => Promise<void>;
   getLeadById: (id: string) => Lead | undefined;
@@ -40,7 +42,8 @@ export function CRMProvider({ children }: { children: ReactNode }) {
       } else {
         // Fallback to local data
         console.warn('Supabase not configured, using local data');
-        setLeads(INITIAL_LEADS);
+        const savedLeads = localStorage.getItem('zygo-crm-leads');
+        setLeads(savedLeads ? JSON.parse(savedLeads) as Lead[] : INITIAL_LEADS);
       }
     } catch (err) {
       console.error('Error loading leads:', err);
@@ -54,6 +57,33 @@ export function CRMProvider({ children }: { children: ReactNode }) {
   const refreshLeads = async () => {
     await loadLeads();
   };
+
+  const updateLead = useCallback(async (leadId: string, leadData: LeadUpdate) => {
+    if (isSupabaseConfigured()) {
+      await leadsService.update(leadId, leadData);
+      await refreshLeads();
+      return;
+    }
+
+    const timestamp = new Date().toISOString();
+    setLeads(prev => prev.map(lead => lead.id === leadId ? {
+      ...lead,
+      ...leadData,
+      historico: [...lead.historico, {
+        id: `h-${Date.now()}`,
+        timestamp,
+        action: 'Dados do lead editados',
+        details: 'Informações de contacto e qualificação atualizadas',
+      }],
+    } : lead));
+  }, []);
+
+  const deleteLead = useCallback(async (leadId: string) => {
+    if (isSupabaseConfigured()) {
+      await leadsService.delete(leadId);
+    }
+    setLeads(prev => prev.filter(lead => lead.id !== leadId));
+  }, []);
 
   const addLead = useCallback(async (leadData: Omit<Lead, 'id' | 'historico' | 'automacoes' | 'notas' | 'pipelineStage'>) => {
     try {
@@ -163,6 +193,12 @@ export function CRMProvider({ children }: { children: ReactNode }) {
     return leads.find(l => l.id === id);
   }, [leads]);
 
+  useEffect(() => {
+    if (!loading && !isSupabaseConfigured()) {
+      localStorage.setItem('zygo-crm-leads', JSON.stringify(leads));
+    }
+  }, [leads, loading]);
+
   // SLA Alerts: leads em "Novo Lead" há mais de 24h
   const slaAlerts = leads
     .filter(lead => {
@@ -182,6 +218,8 @@ export function CRMProvider({ children }: { children: ReactNode }) {
       loading, 
       error,
       addLead, 
+      updateLead,
+      deleteLead,
       updateLeadStage, 
       addNota, 
       getLeadById, 

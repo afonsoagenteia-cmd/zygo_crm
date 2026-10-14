@@ -1,5 +1,5 @@
 import { getSupabase, isSupabaseConfigured } from '../lib/supabase';
-import { Lead, LeadOrigin, ServiceInterest, Owner, PipelineStage } from '../types';
+import { Lead, LeadOrigin, ServiceInterest, Owner, PipelineStage, LeadUpdate } from '../types';
 
 // ============================================
 // LEADS SERVICE
@@ -203,6 +203,39 @@ export const leadsService = {
     return true;
   },
 
+  // Update lead contact and qualification data
+  async update(id: string, leadData: LeadUpdate): Promise<boolean> {
+    const supabase = getSupabase();
+    if (!supabase) return false;
+
+    const { error } = await supabase
+      .from('leads')
+      .update({
+        nome_completo: leadData.nomeCompleto,
+        empresa: leadData.empresa,
+        email: leadData.email,
+        telefone: leadData.telefone,
+        origem: leadData.origem,
+        servico_interesse: leadData.servicoInteresse,
+        proprietario: leadData.proprietario,
+      })
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error updating lead:', error);
+      throw error;
+    }
+
+    const { error: historyError } = await supabase.from('lead_history').insert({
+      lead_id: id,
+      action: 'Dados do lead editados',
+      details: 'Informações de contacto e qualificação atualizadas',
+    });
+
+    if (historyError) console.error('Error recording lead update history:', historyError);
+    return true;
+  },
+
   // Add note to lead
   async addNote(leadId: string, content: string): Promise<boolean> {
     const supabase = getSupabase();
@@ -292,7 +325,7 @@ export const leadsService = {
 
     if (error) {
       console.error('Error deleting lead:', error);
-      return false;
+      throw error;
     }
 
     return true;

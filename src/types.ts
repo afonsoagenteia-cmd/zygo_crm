@@ -28,6 +28,10 @@ export interface Lead {
   automacoes: AutomationLog[];
 }
 
+export type LeadUpdate = Pick<Lead,
+  'nomeCompleto' | 'empresa' | 'email' | 'telefone' | 'origem' | 'servicoInteresse' | 'proprietario'
+>;
+
 export interface HistoryEntry {
   id: string;
   timestamp: string;
