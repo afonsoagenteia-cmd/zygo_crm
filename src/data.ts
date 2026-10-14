@@ -12,25 +12,25 @@ export const PIPELINE_STAGES: PipelineStage[] = [
 ];
 
 export const STAGE_COLORS: Record<PipelineStage, string> = {
-  'Novo Lead': 'bg-blue-500',
-  'Em Qualificação': 'bg-indigo-500',
-  'MQL Qualificado (SQL)': 'bg-purple-500',
-  'Reunião de Diagnóstico Agendada': 'bg-amber-500',
-  'Proposta Comercial Enviada': 'bg-orange-500',
-  'Negociação / Ajustes': 'bg-rose-500',
-  'Ganho': 'bg-emerald-500',
-  'Perdido': 'bg-gray-500',
+  'Novo Lead': 'bg-[#063C20]',
+  'Em Qualificação': 'bg-[#0B5C33]',
+  'MQL Qualificado (SQL)': 'bg-[#1A7A4A]',
+  'Reunião de Diagnóstico Agendada': 'bg-[#C0D637] text-[#063C20]',
+  'Proposta Comercial Enviada': 'bg-[#A8BD2E] text-[#063C20]',
+  'Negociação / Ajustes': 'bg-[#8FA425] text-[#063C20]',
+  'Ganho': 'bg-[#C0D637] text-[#063C20]',
+  'Perdido': 'bg-stone-400',
 };
 
 export const STAGE_BG_COLORS: Record<PipelineStage, string> = {
-  'Novo Lead': 'bg-blue-50 border-blue-200',
-  'Em Qualificação': 'bg-indigo-50 border-indigo-200',
-  'MQL Qualificado (SQL)': 'bg-purple-50 border-purple-200',
-  'Reunião de Diagnóstico Agendada': 'bg-amber-50 border-amber-200',
-  'Proposta Comercial Enviada': 'bg-orange-50 border-orange-200',
-  'Negociação / Ajustes': 'bg-rose-50 border-rose-200',
-  'Ganho': 'bg-emerald-50 border-emerald-200',
-  'Perdido': 'bg-gray-50 border-gray-200',
+  'Novo Lead': 'bg-[#063C20]/5 border-[#063C20]/15',
+  'Em Qualificação': 'bg-[#0B5C33]/5 border-[#0B5C33]/15',
+  'MQL Qualificado (SQL)': 'bg-[#1A7A4A]/5 border-[#1A7A4A]/15',
+  'Reunião de Diagnóstico Agendada': 'bg-[#C0D637]/10 border-[#C0D637]/30',
+  'Proposta Comercial Enviada': 'bg-[#A8BD2E]/10 border-[#A8BD2E]/30',
+  'Negociação / Ajustes': 'bg-[#8FA425]/10 border-[#8FA425]/30',
+  'Ganho': 'bg-[#C0D637]/15 border-[#C0D637]/40',
+  'Perdido': 'bg-stone-100 border-stone-200',
 };
 
 export const AUTOMATION_RULES: AutomationRule[] = [

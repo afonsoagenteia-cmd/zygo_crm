@@ -1,6 +1,6 @@
 import { useCRM } from '../context/CRMContext';
 import { PIPELINE_STAGES, STAGE_COLORS } from '../data';
-import { TrendingUp, Users, AlertTriangle, CheckCircle, XCircle, Clock, DollarSign, Target } from 'lucide-react';
+import { TrendingUp, Users, AlertTriangle, CheckCircle, Clock, Target, ArrowUpRight } from 'lucide-react';
 
 export default function Dashboard() {
   const { leads, slaAlerts } = useCRM();
@@ -33,153 +33,156 @@ export default function Dashboard() {
   const recentLeads = [...leads].sort((a, b) => new Date(b.dataEntrada).getTime() - new Date(a.dataEntrada).getTime()).slice(0, 5);
 
   return (
-    <div className="p-8 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-8 space-y-8 max-w-[1600px] mx-auto">
+      {/* Header */}
+      <div className="flex items-end justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Dashboard</h2>
-          <p className="text-gray-500 text-sm">Visão geral do pipeline de vendas</p>
-        </div>
-        <div className="text-sm text-gray-500">
-          {new Date().toLocaleDateString('pt-PT', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+          <p className="text-xs uppercase tracking-widest text-[#063C20]/50 font-medium mb-2">Visão geral</p>
+          <h2 className="font-display text-4xl font-bold text-[#063C20] tracking-tight">Dashboard</h2>
+          <p className="text-[#063C20]/60 text-sm mt-2">
+            {new Date().toLocaleDateString('pt-PT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+          </p>
         </div>
       </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500">Total de Leads</p>
-              <p className="text-3xl font-bold text-gray-900 mt-1">{totalLeads}</p>
+        <div className="bg-white rounded-2xl p-6 border border-[#063C20]/8 hover:shadow-lg hover:shadow-[#063C20]/5 group">
+          <div className="flex items-center justify-between mb-6">
+            <div className="w-10 h-10 rounded-xl bg-[#063C20]/5 flex items-center justify-center">
+              <Users className="w-5 h-5 text-[#063C20]" />
             </div>
-            <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-              <Users className="w-6 h-6 text-blue-600" />
-            </div>
+            {leadsNovosHoje > 0 && (
+              <span className="text-[10px] font-semibold bg-[#C0D637]/30 text-[#063C20] px-2 py-1 rounded-full flex items-center gap-1">
+                <ArrowUpRight className="w-3 h-3" />+{leadsNovosHoje}
+              </span>
+            )}
           </div>
-          <p className="text-xs text-green-600 mt-2 flex items-center gap-1">
-            <TrendingUp className="w-3 h-3" /> +{leadsNovosHoje} hoje
-          </p>
+          <p className="text-xs text-[#063C20]/50 uppercase tracking-wider font-medium">Total Leads</p>
+          <p className="font-display text-4xl font-bold text-[#063C20] mt-1 tracking-tight">{totalLeads}</p>
         </div>
 
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500">Leads Ativos</p>
-              <p className="text-3xl font-bold text-gray-900 mt-1">{leadsAtivos}</p>
-            </div>
-            <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
-              <Target className="w-6 h-6 text-amber-600" />
+        <div className="bg-white rounded-2xl p-6 border border-[#063C20]/8 hover:shadow-lg hover:shadow-[#063C20]/5">
+          <div className="flex items-center justify-between mb-6">
+            <div className="w-10 h-10 rounded-xl bg-[#063C20]/5 flex items-center justify-center">
+              <Target className="w-5 h-5 text-[#063C20]" />
             </div>
           </div>
-          <p className="text-xs text-gray-500 mt-2">Em progresso no funil</p>
+          <p className="text-xs text-[#063C20]/50 uppercase tracking-wider font-medium">Leads Ativos</p>
+          <p className="font-display text-4xl font-bold text-[#063C20] mt-1 tracking-tight">{leadsAtivos}</p>
+          <p className="text-xs text-[#063C20]/50 mt-1">Em progresso no funil</p>
         </div>
 
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500">Taxa de Conversão</p>
-              <p className="text-3xl font-bold text-gray-900 mt-1">{taxaConversao}%</p>
-            </div>
-            <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
-              <CheckCircle className="w-6 h-6 text-emerald-600" />
+        <div className="bg-white rounded-2xl p-6 border border-[#063C20]/8 hover:shadow-lg hover:shadow-[#063C20]/5">
+          <div className="flex items-center justify-between mb-6">
+            <div className="w-10 h-10 rounded-xl bg-[#C0D637]/20 flex items-center justify-center">
+              <CheckCircle className="w-5 h-5 text-[#063C20]" />
             </div>
           </div>
-          <p className="text-xs text-gray-500 mt-2">{leadsGanhos} ganhos / {leadsPerdidos} perdidos</p>
+          <p className="text-xs text-[#063C20]/50 uppercase tracking-wider font-medium">Conversão</p>
+          <p className="font-display text-4xl font-bold text-[#063C20] mt-1 tracking-tight">{taxaConversao}<span className="text-2xl">%</span></p>
+          <p className="text-xs text-[#063C20]/50 mt-1">{leadsGanhos} ganhos · {leadsPerdidos} perdidos</p>
         </div>
 
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500">Alertas SLA</p>
-              <p className="text-3xl font-bold text-gray-900 mt-1">{slaAlerts.length}</p>
-            </div>
-            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${slaAlerts.length > 0 ? 'bg-red-100' : 'bg-green-100'}`}>
-              {slaAlerts.length > 0 ? (
-                <AlertTriangle className="w-6 h-6 text-red-600" />
-              ) : (
-                <CheckCircle className="w-6 h-6 text-green-600" />
-              )}
+        <div className={`rounded-2xl p-6 border ${slaAlerts.length > 0 ? 'bg-[#063C20] border-[#063C20] text-white' : 'bg-white border-[#063C20]/8'}`}>
+          <div className="flex items-center justify-between mb-6">
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${slaAlerts.length > 0 ? 'bg-[#C0D637]' : 'bg-[#C0D637]/20'}`}>
+              <AlertTriangle className={`w-5 h-5 ${slaAlerts.length > 0 ? 'text-[#063C20]' : 'text-[#063C20]'}`} />
             </div>
           </div>
-          <p className={`text-xs mt-2 ${slaAlerts.length > 0 ? 'text-red-600' : 'text-green-600'}`}>
-            {slaAlerts.length > 0 ? 'SLA quebrado (>24h)' : 'Tudo em dia ✓'}
+          <p className={`text-xs uppercase tracking-wider font-medium ${slaAlerts.length > 0 ? 'text-white/60' : 'text-[#063C20]/50'}`}>Alertas SLA</p>
+          <p className={`font-display text-4xl font-bold mt-1 tracking-tight ${slaAlerts.length > 0 ? 'text-[#C0D637]' : 'text-[#063C20]'}`}>{slaAlerts.length}</p>
+          <p className={`text-xs mt-1 ${slaAlerts.length > 0 ? 'text-white/60' : 'text-[#063C20]/50'}`}>
+            {slaAlerts.length > 0 ? 'Requer atenção' : 'Tudo em dia'}
           </p>
         </div>
       </div>
 
       {/* SLA Alerts */}
       {slaAlerts.length > 0 && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-          <h3 className="text-sm font-semibold text-red-800 flex items-center gap-2 mb-2">
-            <AlertTriangle className="w-4 h-4" />
-            Regra 2: Alertas SLA Quebrado — Leads em "Novo Lead" há mais de 24h
-          </h3>
-          <div className="space-y-2">
+        <div className="bg-[#063C20] rounded-2xl p-6 text-white">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-8 h-8 bg-[#C0D637] rounded-lg flex items-center justify-center">
+              <AlertTriangle className="w-4 h-4 text-[#063C20]" />
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold">Regra 2 · SLA Quebrado</h3>
+              <p className="text-xs text-white/60">Leads em "Novo Lead" há mais de 24h</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {slaAlerts.map(alert => (
-              <div key={alert.leadId} className="flex items-center justify-between bg-white rounded-lg p-3 border border-red-100">
-                <span className="text-sm font-medium text-gray-900">{alert.leadName}</span>
-                <span className="text-xs text-red-600 flex items-center gap-1">
+              <div key={alert.leadId} className="bg-white/5 border border-white/10 rounded-xl p-4 flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium">{alert.leadName}</p>
+                  <p className="text-xs text-white/50">Sem contacto</p>
+                </div>
+                <span className="text-xs text-[#C0D637] font-semibold flex items-center gap-1">
                   <Clock className="w-3 h-3" />
-                  {alert.hoursSinceEntry}h sem contacto
+                  {alert.hoursSinceEntry}h
                 </span>
               </div>
             ))}
           </div>
-          <p className="text-xs text-red-600 mt-2">→ CMO notificado automaticamente</p>
+          <p className="text-xs text-[#C0D637] mt-4 flex items-center gap-2">
+            <span className="w-1 h-1 rounded-full bg-[#C0D637]" />
+            CMO notificado automaticamente
+          </p>
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Pipeline Distribution */}
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <h3 className="text-sm font-semibold text-gray-900 mb-4">Distribuição no Pipeline</h3>
+        <div className="lg:col-span-2 bg-white rounded-2xl p-6 border border-[#063C20]/8">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="font-display text-lg font-semibold text-[#063C20]">Pipeline</h3>
+            <span className="text-xs text-[#063C20]/50">Distribuição por etapa</span>
+          </div>
           <div className="space-y-3">
             {stageCounts.map(({ stage, count }) => (
               <div key={stage} className="flex items-center gap-3">
-                <div className={`w-3 h-3 rounded-full ${STAGE_COLORS[stage]}`} />
-                <span className="text-xs text-gray-600 flex-1 truncate">{stage}</span>
-                <div className="flex items-center gap-2">
-                  <div className="w-24 h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div className={`w-2 h-2 rounded-full ${STAGE_COLORS[stage]}`} />
+                <span className="text-xs text-[#063C20]/70 flex-1 truncate">{stage}</span>
+                <div className="flex items-center gap-3">
+                  <div className="w-32 h-1.5 bg-[#063C20]/5 rounded-full overflow-hidden">
                     <div
                       className={`h-full rounded-full ${STAGE_COLORS[stage]}`}
                       style={{ width: `${totalLeads > 0 ? (count / totalLeads) * 100 : 0}%` }}
                     />
                   </div>
-                  <span className="text-xs font-medium text-gray-900 w-6 text-right">{count}</span>
+                  <span className="text-xs font-semibold text-[#063C20] w-6 text-right tabular-nums">{count}</span>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Origem dos Leads */}
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <h3 className="text-sm font-semibold text-gray-900 mb-4">Origem dos Leads</h3>
-          <div className="space-y-3">
+        {/* Origem + Budget */}
+        <div className="bg-white rounded-2xl p-6 border border-[#063C20]/8">
+          <h3 className="font-display text-lg font-semibold text-[#063C20] mb-6">Origem</h3>
+          <div className="space-y-3 mb-8">
             {Object.entries(origemCounts).map(([origem, count]) => (
               <div key={origem} className="flex items-center justify-between">
-                <span className="text-sm text-gray-700">{origem}</span>
+                <span className="text-sm text-[#063C20]/70">{origem}</span>
                 <div className="flex items-center gap-2">
-                  <div className="w-20 h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="w-16 h-1.5 bg-[#063C20]/5 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-indigo-500 rounded-full"
+                      className="h-full bg-[#C0D637] rounded-full"
                       style={{ width: `${(count / totalLeads) * 100}%` }}
                     />
                   </div>
-                  <span className="text-xs font-medium text-gray-900 w-6 text-right">{count}</span>
+                  <span className="text-xs font-semibold text-[#063C20] w-5 text-right tabular-nums">{count}</span>
                 </div>
               </div>
             ))}
           </div>
 
-          <h3 className="text-sm font-semibold text-gray-900 mt-6 mb-4 flex items-center gap-2">
-            <DollarSign className="w-4 h-4" /> Budget Estimado
-          </h3>
-          <div className="space-y-3">
+          <h3 className="font-display text-lg font-semibold text-[#063C20] mb-4">Budget</h3>
+          <div className="space-y-2">
             {Object.entries(budgetCounts).map(([budget, count]) => (
-              <div key={budget} className="flex items-center justify-between">
-                <span className="text-sm text-gray-700">{budget}</span>
-                <span className="text-xs font-medium bg-gray-100 px-2 py-1 rounded">{count} leads</span>
+              <div key={budget} className="flex items-center justify-between py-1.5">
+                <span className="text-sm text-[#063C20]/70">{budget}</span>
+                <span className="text-xs font-semibold bg-[#063C20]/5 text-[#063C20] px-2.5 py-1 rounded-md tabular-nums">{count}</span>
               </div>
             ))}
           </div>
@@ -187,35 +190,38 @@ export default function Dashboard() {
       </div>
 
       {/* Recent Leads */}
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-        <h3 className="text-sm font-semibold text-gray-900 mb-4">Leads Recentes</h3>
+      <div className="bg-white rounded-2xl border border-[#063C20]/8 overflow-hidden">
+        <div className="p-6 border-b border-[#063C20]/8 flex items-center justify-between">
+          <h3 className="font-display text-lg font-semibold text-[#063C20]">Leads Recentes</h3>
+          <span className="text-xs text-[#063C20]/50">Últimas entradas</span>
+        </div>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="text-left text-xs text-gray-500 border-b">
-                <th className="pb-3 font-medium">Nome</th>
-                <th className="pb-3 font-medium">Empresa</th>
-                <th className="pb-3 font-medium">Origem</th>
-                <th className="pb-3 font-medium">Etapa</th>
-                <th className="pb-3 font-medium">Proprietário</th>
-                <th className="pb-3 font-medium">Data Entrada</th>
+              <tr className="text-left text-[10px] uppercase tracking-wider text-[#063C20]/50 border-b border-[#063C20]/5">
+                <th className="px-6 py-3 font-semibold">Nome</th>
+                <th className="px-6 py-3 font-semibold">Empresa</th>
+                <th className="px-6 py-3 font-semibold">Origem</th>
+                <th className="px-6 py-3 font-semibold">Etapa</th>
+                <th className="px-6 py-3 font-semibold">Proprietário</th>
+                <th className="px-6 py-3 font-semibold">Data</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-[#063C20]/5">
               {recentLeads.map(lead => (
-                <tr key={lead.id} className="text-sm hover:bg-gray-50">
-                  <td className="py-3 font-medium text-gray-900">{lead.nomeCompleto}</td>
-                  <td className="py-3 text-gray-600">{lead.empresa}</td>
-                  <td className="py-3">
-                    <span className="text-xs bg-gray-100 px-2 py-1 rounded">{lead.origem}</span>
+                <tr key={lead.id} className="hover:bg-[#C0D637]/5">
+                  <td className="px-6 py-4 text-sm font-medium text-[#063C20]">{lead.nomeCompleto}</td>
+                  <td className="px-6 py-4 text-sm text-[#063C20]/60">{lead.empresa}</td>
+                  <td className="px-6 py-4">
+                    <span className="text-xs bg-[#063C20]/5 text-[#063C20] px-2 py-1 rounded-md">{lead.origem}</span>
                   </td>
-                  <td className="py-3">
-                    <span className={`text-xs text-white px-2 py-1 rounded ${STAGE_COLORS[lead.pipelineStage]}`}>
+                  <td className="px-6 py-4">
+                    <span className={`text-xs text-white px-2 py-1 rounded-md ${STAGE_COLORS[lead.pipelineStage]}`}>
                       {lead.pipelineStage}
                     </span>
                   </td>
-                  <td className="py-3 text-gray-600">{lead.proprietario}</td>
-                  <td className="py-3 text-gray-500 text-xs">
+                  <td className="px-6 py-4 text-sm text-[#063C20]/70">{lead.proprietario}</td>
+                  <td className="px-6 py-4 text-xs text-[#063C20]/50 tabular-nums">
                     {new Date(lead.dataEntrada).toLocaleDateString('pt-PT')}
                   </td>
                 </tr>
