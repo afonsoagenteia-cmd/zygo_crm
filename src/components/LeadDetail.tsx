@@ -119,7 +119,6 @@ export default function LeadDetail({ leadId, onBack }: LeadDetailProps) {
                 { label: 'Empresa', value: lead.empresa },
                 { label: 'Origem', value: lead.origem },
                 { label: 'Serviço', value: lead.servicoInteresse },
-                { label: 'Budget', value: lead.budget },
                 { label: 'Proprietário', value: lead.proprietario },
                 { label: 'Data Entrada', value: new Date(lead.dataEntrada).toLocaleString('pt-PT') },
               ].map(item => (

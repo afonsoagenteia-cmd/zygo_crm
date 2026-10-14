@@ -25,11 +25,6 @@ export default function Dashboard() {
     return acc;
   }, {} as Record<string, number>);
 
-  const budgetCounts = leads.reduce((acc, lead) => {
-    acc[lead.budget] = (acc[lead.budget] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-
   const recentLeads = [...leads].sort((a, b) => new Date(b.dataEntrada).getTime() - new Date(a.dataEntrada).getTime()).slice(0, 5);
 
   return (
@@ -173,16 +168,6 @@ export default function Dashboard() {
                   </div>
                   <span className="text-xs font-semibold text-[#063C20] w-5 text-right tabular-nums">{count}</span>
                 </div>
-              </div>
-            ))}
-          </div>
-
-          <h3 className="font-display text-lg font-semibold text-[#063C20] mb-4">Budget</h3>
-          <div className="space-y-2">
-            {Object.entries(budgetCounts).map(([budget, count]) => (
-              <div key={budget} className="flex items-center justify-between py-1.5">
-                <span className="text-sm text-[#063C20]/70">{budget}</span>
-                <span className="text-xs font-semibold bg-[#063C20]/5 text-[#063C20] px-2.5 py-1 rounded-md tabular-nums">{count}</span>
               </div>
             ))}
           </div>

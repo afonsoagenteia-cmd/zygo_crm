@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { useCRM } from '../context/CRMContext';
-import { LeadOrigin, ServiceInterest, Budget, Owner } from '../types';
+import { LeadOrigin, ServiceInterest, Owner } from '../types';
 import { CheckCircle, Zap } from 'lucide-react';
 
 export default function LeadForm() {
@@ -13,13 +13,12 @@ export default function LeadForm() {
     telefone: '',
     origem: '' as LeadOrigin | '',
     servicoInteresse: '' as ServiceInterest | '',
-    budget: '' as Budget | '',
     proprietario: '' as Owner | '',
   });
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (!form.nomeCompleto || !form.empresa || !form.email || !form.telefone || !form.origem || !form.servicoInteresse || !form.budget || !form.proprietario) return;
+    if (!form.nomeCompleto || !form.empresa || !form.email || !form.telefone || !form.origem || !form.servicoInteresse || !form.proprietario) return;
 
     addLead({
       nomeCompleto: form.nomeCompleto,
@@ -28,7 +27,6 @@ export default function LeadForm() {
       telefone: form.telefone,
       origem: form.origem as LeadOrigin,
       servicoInteresse: form.servicoInteresse as ServiceInterest,
-      budget: form.budget as Budget,
       dataEntrada: new Date().toISOString(),
       proprietario: form.proprietario as Owner,
     });
@@ -36,7 +34,7 @@ export default function LeadForm() {
     setSubmitted(true);
     setTimeout(() => {
       setSubmitted(false);
-      setForm({ nomeCompleto: '', empresa: '', email: '', telefone: '', origem: '', servicoInteresse: '', budget: '', proprietario: '' });
+      setForm({ nomeCompleto: '', empresa: '', email: '', telefone: '', origem: '', servicoInteresse: '', proprietario: '' });
     }, 3000);
   };
 
@@ -151,6 +149,8 @@ export default function LeadForm() {
                 <option value="">Selecionar origem...</option>
                 <option value="Website">Website</option>
                 <option value="LinkedIn">LinkedIn</option>
+                <option value="Instagram">Instagram</option>
+                <option value="Facebook">Facebook</option>
                 <option value="Evento">Evento</option>
                 <option value="Indicação">Indicação</option>
                 <option value="Google Ads">Google Ads</option>
@@ -165,25 +165,11 @@ export default function LeadForm() {
                 className={inputClass + " bg-white"}
               >
                 <option value="">Selecionar serviço...</option>
-                <option value="Transporte Rodoviário">Transporte Rodoviário</option>
-                <option value="Marítimo">Marítimo</option>
-                <option value="Aéreo">Aéreo</option>
-                <option value="Armazenagem">Armazenagem</option>
+                <option value="O MeuCatálogo">O MeuCatálogo</option>
+                <option value="Última milha">Última milha</option>
+                <option value="Interprovincial">Interprovincial</option>
+                <option value="Armazém">Armazém</option>
                 <option value="Outros">Outros</option>
-              </select>
-            </div>
-            <div>
-              <label className={labelClass}>Budget Estimado</label>
-              <select
-                required
-                value={form.budget}
-                onChange={e => setForm({ ...form, budget: e.target.value as Budget })}
-                className={inputClass + " bg-white"}
-              >
-                <option value="">Selecionar budget...</option>
-                <option value="< €5k">&lt; €5k</option>
-                <option value="€5k-€20k">€5k - €20k</option>
-                <option value="> €20k">&gt; €20k</option>
               </select>
             </div>
             <div>
@@ -217,7 +203,7 @@ export default function LeadForm() {
         <div className="flex justify-end gap-3 pt-4 border-t border-[#063C20]/8">
           <button
             type="button"
-            onClick={() => setForm({ nomeCompleto: '', empresa: '', email: '', telefone: '', origem: '', servicoInteresse: '', budget: '', proprietario: '' })}
+            onClick={() => setForm({ nomeCompleto: '', empresa: '', email: '', telefone: '', origem: '', servicoInteresse: '', proprietario: '' })}
             className="px-5 py-3 text-sm font-medium text-[#063C20]/70 bg-[#063C20]/5 rounded-xl hover:bg-[#063C20]/10 transition-colors"
           >
             Limpar

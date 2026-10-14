@@ -90,9 +90,6 @@ export default function Pipeline({ onSelectLead }: PipelineProps) {
                         <p className="text-xs font-semibold text-[#063C20] truncate">{lead.nomeCompleto}</p>
                         <p className="text-[11px] text-[#063C20]/60 truncate mt-0.5">{lead.empresa}</p>
                         <div className="flex items-center gap-2 mt-2">
-                          <span className="text-[10px] bg-[#C0D637]/20 text-[#063C20] px-1.5 py-0.5 rounded font-medium">
-                            {lead.budget}
-                          </span>
                           <span className="text-[10px] text-[#063C20]/50">
                             {lead.proprietario}
                           </span>

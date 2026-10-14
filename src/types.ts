@@ -1,6 +1,5 @@
-export type LeadOrigin = 'Website' | 'LinkedIn' | 'Evento' | 'Indicação' | 'Google Ads';
-export type ServiceInterest = 'Transporte Rodoviário' | 'Marítimo' | 'Aéreo' | 'Armazenagem' | 'Outros';
-export type Budget = '< €5k' | '€5k-€20k' | '> €20k';
+export type LeadOrigin = 'Website' | 'LinkedIn' | 'Evento' | 'Indicação' | 'Google Ads' | 'Instagram' | 'Facebook';
+export type ServiceInterest = 'O MeuCatálogo' | 'Última milha' | 'Interprovincial' | 'Armazém' | 'Outros';
 export type PipelineStage = 
   | 'Novo Lead'
   | 'Em Qualificação'
@@ -20,7 +19,6 @@ export interface Lead {
   telefone: string;
   origem: LeadOrigin;
   servicoInteresse: ServiceInterest;
-  budget: Budget;
   dataEntrada: string;
   proprietario: Owner;
   pipelineStage: PipelineStage;

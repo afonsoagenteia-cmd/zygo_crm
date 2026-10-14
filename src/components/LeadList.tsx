@@ -100,7 +100,6 @@ export default function LeadList({ onSelectLead }: LeadListProps) {
                 <th className="px-6 py-4 font-semibold">Contacto</th>
                 <th className="px-6 py-4 font-semibold">Origem</th>
                 <th className="px-6 py-4 font-semibold">Serviço</th>
-                <th className="px-6 py-4 font-semibold">Budget</th>
                 <th className="px-6 py-4 font-semibold">Etapa</th>
                 <th className="px-6 py-4 font-semibold">Proprietário</th>
                 <th className="px-6 py-4 font-semibold">Data</th>
@@ -125,9 +124,6 @@ export default function LeadList({ onSelectLead }: LeadListProps) {
                   </td>
                   <td className="px-6 py-4">
                     <span className="text-xs text-[#063C20]/70">{lead.servicoInteresse}</span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="text-xs font-semibold text-[#063C20] bg-[#C0D637]/20 px-2 py-1 rounded-md">{lead.budget}</span>
                   </td>
                   <td className="px-6 py-4">
                     <span className={`text-xs text-white px-2.5 py-1 rounded-md font-medium ${STAGE_COLORS[lead.pipelineStage]}`}>
