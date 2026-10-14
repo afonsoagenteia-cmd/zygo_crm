@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
 import { Lead, PipelineStage, AutomationLog, HistoryEntry } from '../types';
 import { INITIAL_LEADS } from '../data';
 
@@ -13,7 +13,7 @@ interface CRMContextType {
 
 const CRMContext = createContext<CRMContextType | undefined>(undefined);
 
-export function CRMProvider({ children }: { children: React.ReactNode }) {
+export function CRMProvider({ children }: { children: ReactNode }) {
   const [leads, setLeads] = useState<Lead[]>(INITIAL_LEADS);
 
   const addLead = useCallback((leadData: Omit<Lead, 'id' | 'historico' | 'automacoes' | 'notas' | 'pipelineStage'>) => {

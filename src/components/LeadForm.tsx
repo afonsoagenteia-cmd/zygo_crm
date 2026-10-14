@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { useCRM } from '../context/CRMContext';
 import { LeadOrigin, ServiceInterest, Budget, Owner } from '../types';
 import { UserPlus, CheckCircle, Building2, Mail, Phone, Globe, Briefcase, DollarSign, Calendar, User } from 'lucide-react';
@@ -17,7 +17,7 @@ export default function LeadForm() {
     proprietario: '' as Owner | '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!form.nomeCompleto || !form.empresa || !form.email || !form.telefone || !form.origem || !form.servicoInteresse || !form.budget || !form.proprietario) return;
 
