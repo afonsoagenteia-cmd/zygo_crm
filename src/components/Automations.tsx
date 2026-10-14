@@ -148,7 +148,7 @@ export default function Automations() {
                           <div key={a.leadId} className="flex items-center gap-2 text-xs">
                             <AlertCircle className="w-3 h-3 text-red-500" />
                             <span className="text-gray-600"><strong>{a.leadName}</strong> — {a.hoursSinceEntry}h sem contacto</span>
-                            <span className="text-gray-400">→ Sales Manager + CMO notificados</span>
+                            <span className="text-gray-400">→ CMO notificado</span>
                           </div>
                         )) : (
                           <p className="text-xs text-green-600 flex items-center gap-1">

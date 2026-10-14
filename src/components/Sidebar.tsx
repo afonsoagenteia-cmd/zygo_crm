@@ -60,10 +60,10 @@ export default function Sidebar({ currentPage, onNavigate, slaAlertCount }: Side
       <div className="p-4 border-t border-slate-700">
         <div className="flex items-center gap-3 px-4 py-2">
           <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-xs font-bold">
-            SM
+            CMO
           </div>
           <div>
-            <p className="text-xs font-medium">Sales Manager</p>
+            <p className="text-xs font-medium">CMO</p>
             <p className="text-xs text-slate-400">Online</p>
           </div>
         </div>

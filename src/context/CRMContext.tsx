@@ -32,7 +32,7 @@ export function CRMProvider({ children }: { children: ReactNode }) {
           timestamp: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
           rule: 'Regra 1: Boas-vindas Automáticas',
           status: 'Executada',
-          details: 'Email de boas-vindas enviado ao lead + Sales Rep notificado por Slack/Email'
+          details: 'Email de boas-vindas enviado ao lead + Content Specialist notificado por Slack/Email'
         }
       ]
     };

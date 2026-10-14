@@ -10,7 +10,7 @@ export type PipelineStage =
   | 'Negociação / Ajustes'
   | 'Ganho'
   | 'Perdido';
-export type Owner = 'Sales Rep' | 'Sales Manager';
+export type Owner = 'Content Specialist' | 'Customer Success' | 'CMO';
 
 export interface Lead {
   id: string;

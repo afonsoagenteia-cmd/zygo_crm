@@ -52,7 +52,7 @@ export default function LeadForm() {
             <p className="text-xs font-semibold text-blue-800 mb-2">🤖 Automações executadas:</p>
             <ul className="text-xs text-blue-700 space-y-1">
               <li>✓ Email de boas-vindas enviado (5 min)</li>
-              <li>✓ Sales Rep notificado por Slack/Email</li>
+              <li>✓ Content Specialist notificado por Slack/Email</li>
             </ul>
           </div>
           <p className="text-sm text-gray-500">A redirecionar...</p>
@@ -203,8 +203,9 @@ export default function LeadForm() {
               className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white"
             >
               <option value="">Selecionar proprietário...</option>
-              <option value="Sales Rep">Sales Rep</option>
-              <option value="Sales Manager">Sales Manager</option>
+              <option value="Content Specialist">Content Specialist</option>
+              <option value="Customer Success">Customer Success</option>
+              <option value="CMO">CMO</option>
             </select>
           </div>
         </div>
@@ -213,7 +214,7 @@ export default function LeadForm() {
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <p className="text-xs font-semibold text-blue-800 mb-1">🤖 Automações que serão executadas:</p>
           <ul className="text-xs text-blue-700 space-y-0.5">
-            <li>• Regra 1: Email de boas-vindas enviado em 5 min + Notificação ao Sales Rep</li>
+            <li>• Regra 1: Email de boas-vindas enviado em 5 min + Notificação ao Content Specialist</li>
             <li>• Regra 2: Monitorização SLA (alerta se sem contacto em 24h)</li>
           </ul>
         </div>

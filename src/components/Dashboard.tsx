@@ -125,7 +125,7 @@ export default function Dashboard() {
               </div>
             ))}
           </div>
-          <p className="text-xs text-red-600 mt-2">→ Sales Manager e CMO notificados automaticamente</p>
+          <p className="text-xs text-red-600 mt-2">→ CMO notificado automaticamente</p>
         </div>
       )}
 

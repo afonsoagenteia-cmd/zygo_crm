@@ -79,8 +79,9 @@ export default function LeadList({ onSelectLead }: LeadListProps) {
             className="px-3 py-2.5 border border-gray-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none"
           >
             <option value="">Todos os proprietários</option>
-            <option value="Sales Rep">Sales Rep</option>
-            <option value="Sales Manager">Sales Manager</option>
+            <option value="Content Specialist">Content Specialist</option>
+            <option value="Customer Success">Customer Success</option>
+            <option value="CMO">CMO</option>
           </select>
         </div>
       </div>

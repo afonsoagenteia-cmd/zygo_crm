@@ -37,7 +37,7 @@ export const AUTOMATION_RULES: AutomationRule[] = [
   {
     id: 'rule-1',
     name: 'Boas-vindas Automáticas',
-    description: 'Enviar email de boas-vindas em 5 min + Notificar Sales Rep por Slack/Email',
+    description: 'Enviar email de boas-vindas em 5 min + Notificar Content Specialist por Slack/Email',
     trigger: 'Lead entra na etapa "Novo Lead"',
     action: 'Email automático + Notificação Slack/Email',
     active: true,
@@ -45,9 +45,9 @@ export const AUTOMATION_RULES: AutomationRule[] = [
   {
     id: 'rule-2',
     name: 'Alerta SLA Quebrado',
-    description: 'Notificar Sales Manager e CMO se lead está em "Novo Lead" há mais de 24h',
+    description: 'Notificar CMO se lead está em "Novo Lead" há mais de 24h',
     trigger: 'Lead em "Novo Lead" há mais de 24h sem alteração',
-    action: 'Notificação Sales Manager + CMO',
+    action: 'Notificação CMO',
     active: true,
   },
   {
@@ -71,7 +71,7 @@ export const INITIAL_LEADS: Lead[] = [
     servicoInteresse: 'Transporte Rodoviário',
     budget: '€5k-€20k',
     dataEntrada: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-    proprietario: 'Sales Rep',
+    proprietario: 'Content Specialist',
     pipelineStage: 'Em Qualificação',
     notas: ['Cliente interessado em rotas nacionais'],
     historico: [
@@ -79,7 +79,7 @@ export const INITIAL_LEADS: Lead[] = [
       { id: 'h2', timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), action: 'Etapa alterada', details: 'De "Novo Lead" para "Em Qualificação"' },
     ],
     automacoes: [
-      { id: 'a1', timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000 + 5 * 60 * 1000).toISOString(), rule: 'Regra 1: Boas-vindas', status: 'Executada', details: 'Email de boas-vindas enviado + Sales Rep notificado' },
+      { id: 'a1', timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000 + 5 * 60 * 1000).toISOString(), rule: 'Regra 1: Boas-vindas', status: 'Executada', details: 'Email de boas-vindas enviado + Content Specialist notificado' },
     ],
   },
   {
@@ -92,7 +92,7 @@ export const INITIAL_LEADS: Lead[] = [
     servicoInteresse: 'Marítimo',
     budget: '> €20k',
     dataEntrada: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-    proprietario: 'Sales Manager',
+    proprietario: 'CMO',
     pipelineStage: 'Proposta Comercial Enviada',
     notas: ['Grande conta potencial', 'Precisa de solução para rotas Ásia-Europa'],
     historico: [
@@ -103,7 +103,7 @@ export const INITIAL_LEADS: Lead[] = [
       { id: 'h5', timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), action: 'Etapa alterada', details: 'De "Reunião" para "Proposta Comercial Enviada"' },
     ],
     automacoes: [
-      { id: 'a1', timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000 + 5 * 60 * 1000).toISOString(), rule: 'Regra 1: Boas-vindas', status: 'Executada', details: 'Email de boas-vindas enviado + Sales Manager notificado' },
+      { id: 'a1', timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000 + 5 * 60 * 1000).toISOString(), rule: 'Regra 1: Boas-vindas', status: 'Executada', details: 'Email de boas-vindas enviado + CMO notificado' },
     ],
   },
   {
@@ -116,14 +116,14 @@ export const INITIAL_LEADS: Lead[] = [
     servicoInteresse: 'Aéreo',
     budget: '< €5k',
     dataEntrada: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
-    proprietario: 'Sales Rep',
+    proprietario: 'Content Specialist',
     pipelineStage: 'Novo Lead',
     notas: [],
     historico: [
       { id: 'h1', timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(), action: 'Lead criado', details: 'Via Google Ads' },
     ],
     automacoes: [
-      { id: 'a1', timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000 + 5 * 60 * 1000).toISOString(), rule: 'Regra 1: Boas-vindas', status: 'Executada', details: 'Email de boas-vindas enviado + Sales Rep notificado' },
+      { id: 'a1', timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000 + 5 * 60 * 1000).toISOString(), rule: 'Regra 1: Boas-vindas', status: 'Executada', details: 'Email de boas-vindas enviado + Content Specialist notificado' },
     ],
   },
   {
@@ -136,7 +136,7 @@ export const INITIAL_LEADS: Lead[] = [
     servicoInteresse: 'Armazenagem',
     budget: '€5k-€20k',
     dataEntrada: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
-    proprietario: 'Sales Manager',
+    proprietario: 'Customer Success',
     pipelineStage: 'Ganho',
     notas: ['Cliente fechado! Contrato anual', 'Necessidade de armazenagem temp. controlada'],
     historico: [
@@ -158,7 +158,7 @@ export const INITIAL_LEADS: Lead[] = [
     servicoInteresse: 'Outros',
     budget: '< €5k',
     dataEntrada: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-    proprietario: 'Sales Rep',
+    proprietario: 'Content Specialist',
     pipelineStage: 'Perdido',
     motivoPerda: 'Budget insuficiente para o serviço pretendido',
     notas: ['Reavaliar em Q2'],
@@ -178,7 +178,7 @@ export const INITIAL_LEADS: Lead[] = [
     servicoInteresse: 'Transporte Rodoviário',
     budget: '€5k-€20k',
     dataEntrada: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-    proprietario: 'Sales Rep',
+    proprietario: 'Customer Success',
     pipelineStage: 'Reunião de Diagnóstico Agendada',
     notas: ['Reunião marcada para amanhã às 14h'],
     historico: [
@@ -186,7 +186,7 @@ export const INITIAL_LEADS: Lead[] = [
       { id: 'h2', timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), action: 'Etapa alterada', details: 'De "MQL" para "Reunião de Diagnóstico Agendada"' },
     ],
     automacoes: [
-      { id: 'a1', timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000 + 5 * 60 * 1000).toISOString(), rule: 'Regra 1: Boas-vindas', status: 'Executada', details: 'Email enviado + Sales Rep notificado' },
+      { id: 'a1', timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000 + 5 * 60 * 1000).toISOString(), rule: 'Regra 1: Boas-vindas', status: 'Executada', details: 'Email enviado + Customer Success notificado' },
     ],
   },
 ];
