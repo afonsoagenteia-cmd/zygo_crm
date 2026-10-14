@@ -1,0 +1,186 @@
+import { Lead, AutomationRule, PipelineStage } from './types';
+
+export const PIPELINE_STAGES: PipelineStage[] = [
+  'Novo Lead',
+  'Em Qualificação',
+  'MQL Qualificado (SQL)',
+  'Reunião de Diagnóstico Agendada',
+  'Proposta Comercial Enviada',
+  'Negociação / Ajustes',
+  'Ganho',
+  'Perdido',
+];
+
+export const STAGE_COLORS: Record<PipelineStage, string> = {
+  'Novo Lead': 'bg-[#063C20]',
+  'Em Qualificação': 'bg-[#0B5C33]',
+  'MQL Qualificado (SQL)': 'bg-[#1A7A4A]',
+  'Reunião de Diagnóstico Agendada': 'bg-[#C0D637] text-[#063C20]',
+  'Proposta Comercial Enviada': 'bg-[#A8BD2E] text-[#063C20]',
+  'Negociação / Ajustes': 'bg-[#8FA425] text-[#063C20]',
+  'Ganho': 'bg-[#C0D637] text-[#063C20]',
+  'Perdido': 'bg-stone-400',
+};
+
+export const STAGE_BG_COLORS: Record<PipelineStage, string> = {
+  'Novo Lead': 'bg-[#063C20]/5 border-[#063C20]/15',
+  'Em Qualificação': 'bg-[#0B5C33]/5 border-[#0B5C33]/15',
+  'MQL Qualificado (SQL)': 'bg-[#1A7A4A]/5 border-[#1A7A4A]/15',
+  'Reunião de Diagnóstico Agendada': 'bg-[#C0D637]/10 border-[#C0D637]/30',
+  'Proposta Comercial Enviada': 'bg-[#A8BD2E]/10 border-[#A8BD2E]/30',
+  'Negociação / Ajustes': 'bg-[#8FA425]/10 border-[#8FA425]/30',
+  'Ganho': 'bg-[#C0D637]/15 border-[#C0D637]/40',
+  'Perdido': 'bg-stone-100 border-stone-200',
+};
+
+export const AUTOMATION_RULES: AutomationRule[] = [
+  {
+    id: 'rule-1',
+    name: 'Boas-vindas Automáticas',
+    description: 'Enviar email de boas-vindas em 5 min + Notificar Content Specialist por Slack/Email',
+    trigger: 'Lead entra na etapa "Novo Lead"',
+    action: 'Email automático + Notificação Slack/Email',
+    active: true,
+  },
+  {
+    id: 'rule-2',
+    name: 'Alerta SLA Quebrado',
+    description: 'Notificar CMO se lead está em "Novo Lead" há mais de 24h',
+    trigger: 'Lead em "Novo Lead" há mais de 24h sem alteração',
+    action: 'Notificação CMO',
+    active: true,
+  },
+  {
+    id: 'rule-3',
+    name: 'Handover para Operações',
+    description: 'Criar tarefa de handover + enviar email de boas-vindas do Cliente',
+    trigger: 'Etapa alterada para "Ganho"',
+    action: 'Tarefa Handover + Email boas-vindas Cliente',
+    active: true,
+  },
+];
+
+export const INITIAL_LEADS: Lead[] = [
+  {
+    id: 'lead-1',
+    nomeCompleto: 'Carlos Mendes',
+    empresa: 'LogiTrans Portugal',
+    email: 'carlos.mendes@logitrans.pt',
+    telefone: '+351 912 345 678',
+    origem: 'Website',
+    servicoInteresse: 'Interprovincial',
+    dataEntrada: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    proprietario: 'Content Specialist',
+    pipelineStage: 'Em Qualificação',
+    notas: ['Cliente interessado em rotas nacionais'],
+    historico: [
+      { id: 'h1', timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), action: 'Lead criado', details: 'Via formulário do website' },
+      { id: 'h2', timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), action: 'Etapa alterada', details: 'De "Novo Lead" para "Em Qualificação"' },
+    ],
+    automacoes: [
+      { id: 'a1', timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000 + 5 * 60 * 1000).toISOString(), rule: 'Regra 1: Boas-vindas', status: 'Executada', details: 'Email de boas-vindas enviado + Content Specialist notificado' },
+    ],
+  },
+  {
+    id: 'lead-2',
+    nomeCompleto: 'Ana Rodrigues',
+    empresa: 'Global Freight Lda',
+    email: 'ana.rodrigues@globalfreight.com',
+    telefone: '+351 923 456 789',
+    origem: 'LinkedIn',
+    servicoInteresse: 'Última milha',
+    dataEntrada: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+    proprietario: 'CMO',
+    pipelineStage: 'Proposta Comercial Enviada',
+    notas: ['Grande conta potencial', 'Precisa de solução para entregas urbanas'],
+    historico: [
+      { id: 'h1', timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), action: 'Lead criado', details: 'Via LinkedIn' },
+      { id: 'h2', timestamp: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(), action: 'Etapa alterada', details: 'De "Novo Lead" para "Em Qualificação"' },
+      { id: 'h3', timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), action: 'Etapa alterada', details: 'De "Em Qualificação" para "MQL Qualificado (SQL)"' },
+      { id: 'h4', timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), action: 'Etapa alterada', details: 'De "MQL" para "Reunião de Diagnóstico Agendada"' },
+      { id: 'h5', timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), action: 'Etapa alterada', details: 'De "Reunião" para "Proposta Comercial Enviada"' },
+    ],
+    automacoes: [
+      { id: 'a1', timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000 + 5 * 60 * 1000).toISOString(), rule: 'Regra 1: Boas-vindas', status: 'Executada', details: 'Email de boas-vindas enviado + CMO notificado' },
+    ],
+  },
+  {
+    id: 'lead-3',
+    nomeCompleto: 'Miguel Santos',
+    empresa: 'Express Cargo',
+    email: 'miguel@expresscargo.pt',
+    telefone: '+351 934 567 890',
+    origem: 'Instagram',
+    servicoInteresse: 'O MeuCatálogo',
+    dataEntrada: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
+    proprietario: 'Content Specialist',
+    pipelineStage: 'Novo Lead',
+    notas: [],
+    historico: [
+      { id: 'h1', timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(), action: 'Lead criado', details: 'Via Instagram' },
+    ],
+    automacoes: [
+      { id: 'a1', timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000 + 5 * 60 * 1000).toISOString(), rule: 'Regra 1: Boas-vindas', status: 'Executada', details: 'Email de boas-vindas enviado + Content Specialist notificado' },
+    ],
+  },
+  {
+    id: 'lead-4',
+    nomeCompleto: 'Sofia Pereira',
+    empresa: 'MedLogistics SA',
+    email: 'sofia.pereira@medlog.pt',
+    telefone: '+351 945 678 901',
+    origem: 'Evento',
+    servicoInteresse: 'Armazém',
+    dataEntrada: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+    proprietario: 'Customer Success',
+    pipelineStage: 'Ganho',
+    notas: ['Cliente fechado! Contrato anual', 'Necessidade de armazenagem temp. controlada'],
+    historico: [
+      { id: 'h1', timestamp: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(), action: 'Lead criado', details: 'Via Evento Logística 2024' },
+      { id: 'h2', timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), action: 'Etapa alterada', details: 'De "Negociação" para "Ganho"' },
+    ],
+    automacoes: [
+      { id: 'a1', timestamp: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000 + 5 * 60 * 1000).toISOString(), rule: 'Regra 1: Boas-vindas', status: 'Executada', details: 'Email enviado' },
+      { id: 'a2', timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), rule: 'Regra 3: Handover', status: 'Executada', details: 'Tarefa Handover criada + Email boas-vindas Cliente enviado' },
+    ],
+  },
+  {
+    id: 'lead-5',
+    nomeCompleto: 'Ricardo Ferreira',
+    empresa: 'TechShip Solutions',
+    email: 'ricardo@techship.io',
+    telefone: '+351 956 789 012',
+    origem: 'Facebook',
+    servicoInteresse: 'Outros',
+    dataEntrada: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+    proprietario: 'Content Specialist',
+    pipelineStage: 'Perdido',
+    motivoPerda: 'Sem capacidade para o serviço pretendido',
+    notas: ['Reavaliar em Q2'],
+    historico: [
+      { id: 'h1', timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), action: 'Lead criado', details: 'Via Facebook' },
+      { id: 'h2', timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), action: 'Etapa alterada', details: 'De "Negociação" para "Perdido"' },
+    ],
+    automacoes: [],
+  },
+  {
+    id: 'lead-6',
+    nomeCompleto: 'Beatriz Almeida',
+    empresa: 'Fresh Atlantic',
+    email: 'beatriz@freshatlantic.pt',
+    telefone: '+351 967 890 123',
+    origem: 'Website',
+    servicoInteresse: 'Interprovincial',
+    dataEntrada: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+    proprietario: 'Customer Success',
+    pipelineStage: 'Reunião de Diagnóstico Agendada',
+    notas: ['Reunião marcada para amanhã às 14h'],
+    historico: [
+      { id: 'h1', timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), action: 'Lead criado', details: 'Via website' },
+      { id: 'h2', timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), action: 'Etapa alterada', details: 'De "MQL" para "Reunião de Diagnóstico Agendada"' },
+    ],
+    automacoes: [
+      { id: 'a1', timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000 + 5 * 60 * 1000).toISOString(), rule: 'Regra 1: Boas-vindas', status: 'Executada', details: 'Email enviado + Customer Success notificado' },
+    ],
+  },
+];
